@@ -75,6 +75,28 @@ standard K-Fold — useful as a safeguard but not a silver bullet.
 SHAP interpretability for class-specific drivers.
 
 ---
+### [Inventory Demand Forecasting](./Inventory-Demand-Forecasting)
+**Regression (Time-Series)** | LightGBM / Ridge | Val RMSLE: 0.495
+Forecast weekly demand for a single SKU (Mantecadas Vainilla) from Grupo
+Bimbo's 74M-row transactional dataset, reduced to 2.15M rows. Focus on
+**leakage-safe feature engineering at scale** — 521k unique clients, only
+7 weeks of history, and a severely right-skewed target (median 4, max 1,815).
+
+**Key finding:** A zero-model client-mean lookup (0.512 RMSLE) captured ~80%
+of extractable signal. Log-transforming 4 skewed features improved Ridge more
+than switching to LightGBM — proving **preprocessing > model choice** on this
+data. M2 enrichment features (client_std, client_median) ranked high in tree
+importance but added zero generalization, and 81 hyperparameter configs
+converged within 0.0002 RMSLE — confirming a hard **feature ceiling at ~0.495**.
+
+**Key techniques:** Hierarchical mean encoding (client → route → depot →
+channel), temporal train/val split with TimeSeriesSplit CV, log1p target
+transformation, tri-point promotional encoding, price segmentation,
+high-cardinality aggregation strategy.
+
+
+
+---
 
 ## Approach
 
